@@ -1,0 +1,48 @@
+name: ESPHome firmware
+
+on:
+  push:
+    branches:
+      - feature/homekit-ble-proxy
+  pull_request:
+    branches:
+      - main
+      - feature/homekit-ble-proxy
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        config:
+          - daikin-bry88aa151k.yaml
+          - daikin-bry88ab151k.yaml
+          - daikin-bry88ab151k-ch2o.yaml
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Install ESPHome
+        run: pip install "esphome==2026.10.1"
+
+      - name: Prepare secrets
+        run: cp secrets.yaml.example secrets.yaml
+
+      - name: Compile firmware
+        run: esphome compile "${{ matrix.config }}"
+
+      - name: Upload build output
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: "${{ matrix.config }}-build"
+          path: .esphome/build/
+          if-no-files-found: warn
+          retention-days: 7
