@@ -49,20 +49,26 @@ cv.only_on([PLATFORM_ESP32]),
 cv.only_with_esp_idf)
 
 async def to_code(config):
-    # cg.add_define("CONFIG_ESP_MFI_DEBUG_ENABLE")
-    add_idf_component(
-        name="idf-extra-components",
-        repo="https://github.com/espressif/idf-extra-components.git",
-        ref="master",
-        components=["libsodium", "jsmn", "json_parser", "json_generator"],
-        submodules=["libsodium/libsodium"]
-    )
-    add_idf_component(
-        name="esp-homekit-sdk",
-        repo="https://github.com/rednblkx/esp-homekit-sdk",
-        ref="master",
-        components=["esp_hap_core", "esp_hap_apple_profiles", "esp_hap_extras", "esp_hap_platform", "hkdf-sha", "mu_srp"],
-    )
+    from esphome.core import CORE
+    if getattr(CORE, "using_toolchain_esp_idf", False):
+        cg.add_platformio_option("lib_ignore", ["libsodium"])
+    add_idf_component(name="espressif/libsodium", ref="^1.0.20~1")
+    sdk_repo = "https://github.com/rednblkx/esp-homekit-sdk"
+    sdk_ref = "esphome"
+    for component, component_path in [
+        ("esp_hap_core", "components/homekit/esp_hap_core"),
+        ("esp_hap_apple_profiles", "components/homekit/esp_hap_apple_profiles"),
+        ("esp_hap_extras", "components/homekit/esp_hap_extras"),
+        ("esp_hap_platform", "components/homekit/esp_hap_platform"),
+        ("hkdf-sha", "components/homekit/hkdf-sha"),
+        ("mu_srp", "components/homekit/mu_srp"),
+    ]:
+        add_idf_component(
+            name=component,
+            repo=sdk_repo,
+            ref=sdk_ref,
+            path=component_path,
+        )
     info_temp = []
     if "meta" in config:
         for m in config["meta"]:
@@ -70,4 +76,6 @@ async def to_code(config):
     var = cg.new_Pvariable(config[CONF_ID], config["setup_code"], config["setup_id"], info_temp)
     if CONF_PORT in config:
         add_idf_sdkconfig_option("CONFIG_HAP_HTTP_SERVER_PORT", config[CONF_PORT])
+    add_idf_sdkconfig_option("CONFIG_MBEDTLS_HKDF_C", True)
+    add_idf_sdkconfig_option("CONFIG_LWIP_MAX_SOCKETS", 16)
     await cg.register_component(var, config)
