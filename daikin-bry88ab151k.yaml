@@ -11,7 +11,13 @@ esphome:
     # - "pm2005.h"
 
 external_components:
+  # 先加载本地 PN532 轻量声明：本项目不使用 HomeKey，只需要满足 HAP-ESPHome 的可选类型引用
+  - source:
+      type: local
+      path: components
+    components: [pn532]
   - source: github://rednblkx/HAP-ESPHome@main
+    components: [homekit, homekit_base]
     refresh: 1d
 
 esp32:
