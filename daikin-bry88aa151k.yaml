@@ -67,28 +67,18 @@ i2c:
   scan: true
 
 sensor:
-- platform: custom
-  lambda: |-
-    auto cm1106Sensor = new CM1106Sensor(id(cm1106_uart), 10000);
-    App.register_component(cm1106Sensor);
-    return {cm1106Sensor};
-  sensors:
-  - name: "DAIKIN CO2 Sensor"
-    id: co2sensor
-    device_class: carbon_dioxide
-    state_class: measurement
-    unit_of_measurement: "ppm"
-- platform: custom
-  lambda: |-
-    auto pm25 = new pm2005();
-    App.register_component(pm25);
-    return {pm25};
-  sensors:
-  - name: "DAIKIN PM2.5 Sensor "
-    id: pm25sensor
-    device_class: pm25
-    state_class: measurement
-    unit_of_measurement: "µg/m³"
+- platform: daikin_cm1106
+  uart_id: cm1106_uart
+  update_interval: 10s
+  name: "DAIKIN CO2 Sensor"
+  id: co2sensor
+  state_class: measurement
+- platform: daikin_pm25
+  i2c_id: pm25_bus
+  update_interval: 1s
+  name: "DAIKIN PM2.5 Sensor"
+  id: pm25sensor
+  state_class: measurement
 - platform: adc
   pin: 34
   attenuation: auto
@@ -136,14 +126,10 @@ switch:
   icon: mdi:led-off
   id: indicator
   optimistic: true
-- platform: custom
-  lambda: |-
-    auto cm1106Calib = new CM1106CalibrateSwitch(id(cm1106_uart));
-    App.register_component(cm1106Calib);
-    return {cm1106Calib};
-  switches:
-    id: calibration
-    internal: true
+- platform: daikin_cm1106
+  uart_id: cm1106_uart
+  id: calibration
+  internal: true
 - platform: gpio
   pin: 5
   id: co2led
