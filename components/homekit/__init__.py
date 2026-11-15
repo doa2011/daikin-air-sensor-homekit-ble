@@ -28,6 +28,7 @@ CONFIG_SCHEMA = cv.All(
 )
 
 async def to_code(config):
+    cg.add_global(cg.RawStatement('#include "esphome/components/homekit/HAPAccessory.h"'))
     var = cg.new_Pvariable(config[CONF_ID])
     await cg.register_component(var, config)
     for item in config["sensor"]:
