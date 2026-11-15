@@ -13,7 +13,6 @@ CONFIG_SCHEMA = cv.All(
                          device_class="pm25", state_class="measurement")
     .extend(cv.polling_component_schema("1s"))
     .extend({
-        cv.GenerateID(): cv.declare_id(PM25Sensor),
         cv.Required(CONF_I2C_ID): cv.use_id(i2c.I2CBus),
     }),
 )
