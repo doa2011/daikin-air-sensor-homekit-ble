@@ -13,7 +13,6 @@ CONFIG_SCHEMA = cv.All(
                          device_class="volatile_organic_compounds", state_class="measurement")
     .extend(cv.polling_component_schema("5s"))
     .extend({
-        cv.GenerateID(): cv.declare_id(ZE08Sensor),
         cv.Required(CONF_UART_ID): cv.use_id(uart.UARTComponent),
     }),
 )
