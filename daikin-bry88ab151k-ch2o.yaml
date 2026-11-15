@@ -77,11 +77,6 @@ i2c:
   scl: 21
   scan: true
 
-custom_component:
-- lambda: |-
-    auto ze08 = new WinsenZE08Sensor(id(uart_ze08), id(ze08_ch2o));
-    App.register_component(ze08);
-    return {ze08};
 sensor:
 - platform: daikin_ze08
   uart_id: uart_ze08
@@ -89,28 +84,18 @@ sensor:
   name: "DAIKIN CH2O Sensor"
   id: ze08_ch2o
   state_class: measurement
-- platform: custom
-  lambda: |-
-    auto cm1106Sensor = new CM1106Sensor(id(cm1106_uart), 10000);
-    App.register_component(cm1106Sensor);
-    return {cm1106Sensor};
-  sensors:
-  - name: "DAIKIN CO2 Sensor"
-    id: co2sensor
-    device_class: carbon_dioxide
-    state_class: measurement
-    unit_of_measurement: "ppm"
-- platform: custom
-  lambda: |-
-    auto pm25 = new pm2005();
-    App.register_component(pm25);
-    return {pm25};
-  sensors:
-  - name: "DAIKIN PM2.5 Sensor"
-    id: pm25sensor
-    device_class: pm25
-    state_class: measurement
-    unit_of_measurement: "µg/m³"
+- platform: daikin_cm1106
+  uart_id: cm1106_uart
+  update_interval: 10s
+  name: "DAIKIN CO2 Sensor"
+  id: co2sensor
+  state_class: measurement
+- platform: daikin_pm25
+  i2c_id: pm25_bus
+  update_interval: 1s
+  name: "DAIKIN PM2.5 Sensor"
+  id: pm25sensor
+  state_class: measurement
 - platform: sgp30
   i2c_id: th_bus
   compensation:
@@ -157,14 +142,10 @@ switch:
   icon: mdi:led-off
   id: indicator
   optimistic: true
-- platform: custom
-  lambda: |-
-    auto cm1106Calib = new CM1106CalibrateSwitch(id(cm1106_uart));
-    App.register_component(cm1106Calib);
-    return {cm1106Calib};
-  switches:
-    id: calibration
-    internal: true
+- platform: daikin_cm1106
+  uart_id: cm1106_uart
+  id: calibration
+  internal: true
 - platform: gpio
   pin: 4
   id: co2led
