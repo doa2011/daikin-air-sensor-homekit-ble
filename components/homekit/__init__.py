@@ -3,7 +3,7 @@ import esphome.config_validation as cv
 from esphome.components import sensor
 from esphome.const import CONF_ID, PLATFORM_ESP32
 from esphome.core import ID
-from . import homekit_base
+from .. import homekit_base
 
 DEPENDENCIES = ["esp32", "network", "homekit_base"]
 AUTO_LOAD = ["homekit_base"]
