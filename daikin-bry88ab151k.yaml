@@ -41,8 +41,7 @@ api:
   reboot_timeout: 0s
 
 ota:
-
-
+  - platform: esphome
 logger:
   logs:
     hdc1080: WARN
