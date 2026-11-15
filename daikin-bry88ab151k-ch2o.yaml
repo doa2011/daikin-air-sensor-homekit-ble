@@ -6,10 +6,10 @@ esphome:
     # version: "PM2005"
   name_add_mac_suffix: true
   includes:
-    - "ze08-ch2o.h"
-    - "cm1106.h"
-    - "pm2105.h"  #根据PM2.5传感器型号选择
-    # - "pm2005.h"
+    - "header/ze08-ch2o.h"
+    - "header/cm1106.h"
+    - "header/pm2105.h"  #根据PM2.5传感器型号选择
+    # - "header/pm2005.h"
 
 external_components:
   # 先加载本地 PN532 轻量声明：本项目不使用 HomeKey，只需要满足 HAP-ESPHome 的可选类型引用
