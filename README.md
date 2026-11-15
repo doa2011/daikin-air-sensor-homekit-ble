@@ -1,26 +1,60 @@
-## 大金空气传感器
-下图为BRY88AB151K版，其右上为甲醛扩展侧盖，向后滑动打开；不带甲醛字样的为BRY88AA151K版，不支持甲醛扩展
+# 大金空气传感器：HomeKit + Home Assistant BLE Proxy
 
-<img src="https://raw.githubusercontent.com/louliangsheng/daikin-air-sensor/main/image/BRY88AB151K.jpg" width="300">
+基于 [louliangsheng/daikin-air-sensor](https://github.com/louliangsheng/daikin-air-sensor) 的扩展分支，保留原有 BRY88AA151K、BRY88AB151K 和 BRY88AB151K-CH2O 传感器功能，并增加：
 
-## 编译以及烧录
-1.按照参考链接[视频教程](https://www.bilibili.com/video/BV1PY4y1y7sE)进行拆解。
+- **ESPHome Bluetooth Proxy**：把设备附近的 BLE 广播和 GATT 通信转发到 Home Assistant，多个设备可共同扩大 HA 蓝牙覆盖范围。
+- **原生 Apple HomeKit**：通过 HAP-ESPHome 直接接入 Apple「家庭」App。
+- **Home Assistant 原生 API**：保留 ESPHome API，传感器仍直接接入 HA。
 
-2.根据需要将header文件夹中的pm2005.h、pm2105.h、cm1106.h放入ESPHome配置文件夹中，然后根据传感器选择相应的yaml文件编译固件，其中PM2.5传感器银色金属外壳是pm2005，黑色塑料外壳的是pm2105，若没有编译环境，可直接使用firmware文件夹中编译好的factory固件刷写。
+> 这里使用的是 ESPHome Bluetooth Proxy，不是 Bluetooth Mesh。各设备通过 Wi-Fi 接入 HA，HA 会统一管理多个 Proxy。
 
-3.将Power&IIC排线插到PCB板上，BRY88AB151K版为短接图片中GPIO0两个针脚（其中一个为GND），短接后上电即可进入BOOT刷写模式，然后将图片中的RXD TXD GND连接到USB转TTL刷机板的TX RX GND上，USB插到电脑上，进入[WEB ESPHome](https://web.esphome.io/) 烧录固件；BRY88AA151K版刷机原理相同，需要短接GPIO0和GND进入BOOT后通过芯片U0 RXTX刷写；进入BOOT后PCB板上的LED灯不亮，若无法烧录可尝试对调RXD TXD针脚或一直短接GPIO0/GND并重新上电。
+## 1. 支持型号
 
-<img src="https://raw.githubusercontent.com/louliangsheng/daikin-air-sensor/refs/heads/main/image/replication.jpg" width="350"><img src="https://i0.wp.com/randomnerdtutorials.com/wp-content/uploads/2018/08/esp32-pinout-chip-ESP-WROOM-32.png" width="430">
+| 配置文件 | 型号/传感器 |
+|---|---|
+| `daikin-bry88aa151k.yaml` | BRY88AA151K，PM2005 |
+| `daikin-bry88ab151k.yaml` | BRY88AB151K，PM2105 |
+| `daikin-bry88ab151k-ch2o.yaml` | BRY88AB151K，PM2105 + ZE08-CH2O |
 
-4.刷写完成后重新上电，连接DAIKIN Fallback Hotspot热点进行配网，BRY88AB151K版可安装[甲醛模块BRY88HA111](https://mp.weixin.qq.com/s?search_click_id=7568137682827411716-1679579213259-0915290085&__biz=MzI2MTQ1Mzk5NA==&mid=2247507885&idx=1&sn=4e776305cd6160c879ebb7c7b14114b3&chksm=ea58be68dd2f377e69ff886ba1ef2e415e8a3beee49b2b690f129c9dc010533a1c179c52a617&scene=7&clicktime=1679579213&enterid=1679579213&subscene=0&ascene=65&devicetype=iOS16.3.1&version=18002225&nettype=WIFI&lang=zh_CN&countrycode=CN&fontScale=100&exportkey=n_ChQIAhIQqp9dEP%2FcvKNVHjT9MLSoURLbAQIE97dBBAEAAAAAALfEBAuiQiEAAAAOpnltbLcz9gKNyK89dVj0tP45T%2Fk5VwDaZiPSX7nxBsvQzJfAO87KKKXNywrNXQSAgmyxqgaAGN37ms8QtxnxcvyjU5Ec%2FVkE3UVETqpzCG7kW9sFuH2XkRVj5qAT06RIDakT%2BXpfhqK24j9zp3%2Bxuq2SrOr3gwBi3sqsPCcmRKwUZ3zEUPUGofxD%2B4HrNPWxEKcwCH48Rzs49u%2FqjaAQfOjcn9rVs2X2sWnFcLAP3%2BlwZONDO423YffTUZW4811HiZ755Q%3D%3D&pass_ticket=VG%2B%2FH3lCltnJWspHiUjdHQtR83Q%2BxCGYBd2vxTKXFSsgfMHaA28Ud%2BsfO15hWyOYtfamz1JiG7DhYWErlwaccA%3D%3D&wx_header=3)；配网完成后下载firmware/ota文件夹内设备对应固件进行升级，升级后需要重新配网；CO2传感器启动需要大概3分钟，启动期间数值为550ppm；在进行CO2校准时，请确保放入室外或此时CO2浓度足够低。
+## 2. 配置 Wi-Fi 和 HomeKit
 
-<img src="https://mmbiz.qpic.cn/mmbiz_png/HhGBahfz4QZ6IMPibRCbowicxMjSgsZNiaCX7C6A6RgkyOuGIbDl0eCWA5cjsypn0RPjo7rjbAhqvtTxANthGQZmw/640?wx_fmt=png&wxfrom=5&wx_lazy=1&wx_co=1" width="450">
+1. 将 `secrets.yaml.example` 复制为 ESPHome 配置目录中的 `secrets.yaml`。
+2. 修改以下项目：
 
-## 参考链接
-- 感谢C佬的[视频教程](https://www.bilibili.com/video/BV1PY4y1y7sE)
-- 感谢[严泽远](https://github.com/nixieclock)大佬的PM2.5传感器[PM2105](http://www.gassensor.com.cn/ParticulateSensor/info_itemid_104.html) Header文件以及各种证件照
-- 感谢MiWyf大佬的甲醛传感器[ZE08-CH20](http://style.winsensor.com/pro_pdf/ZE08-CH2O.pdf) [Header文件](https://github.com/miwyf/ze08-ch2o-esphome)
-- [CM1106二氧化碳传感器](http://www.gassensor.com.cn/CO2Sensor/info_itemid_94.html) [Header文件](https://github.com/LeoDJ/ESPHome_Nodes)
+```yaml
+wifi_ssid: "你的 Wi-Fi 名称"
+wifi_password: "你的 Wi-Fi 密码"
+homekit_setup_code: "321-54-987"
+```
 
-## 购买链接
-不想刷机的老板可以咸鱼搜索用户[是阿辉没错](https://m.tb.cn/h.TiM3dln?tk=4So1eYddumv)，直接购买俺刷好的成品，包含甲醛模块，同时也有兼容原大金APP的甲醛模块单独出售。
+HomeKit 配对码格式必须为 `XXX-XX-XXX`。请自行设置，不要沿用示例码，也不要把真实的 `secrets.yaml` 提交到 GitHub。
+
+## 3. 编译和烧录
+
+选择与设备硬件匹配的 YAML 文件编译。首次刷写按原项目说明进入 ESP32 下载模式并通过串口烧录；后续可通过 ESPHome OTA 更新。
+
+本分支采用 ESP-IDF，并加载 HAP-ESPHome。Bluetooth Proxy 与 HomeKit 同时运行会增加 RAM/IRAM 占用，具体余量以 CI 编译结果及设备运行日志为准。为给 BLE 和 HomeKit 留出资源，配置中移除了原来的 Web Server；HA API、传感器、校准和指示灯功能保留。
+
+## 4. Home Assistant 使用
+
+设备连接 Wi-Fi 并接入 ESPHome Integration 后，会同时提供：
+
+- 原有空气质量传感器实体；
+- ESPHome 原生 API；
+- Bluetooth Proxy。
+
+在 HA 的蓝牙集成中，多个 ESPHome Proxy 会自动参与蓝牙设备发现和通信。建议扫描模式先使用 Auto。
+
+## 5. Apple 家庭配对
+
+设备启动后，在 ESPHome 日志中查找 HomeKit 配对提示，使用 Apple「家庭」App 添加配件，并输入 `secrets.yaml` 中设置的配对码。
+
+本配置将温度、湿度、CO₂ 和 PM2.5 传感器映射到 HomeKit。TVOC/甲醛传感器继续通过 Home Assistant 提供；HAP-ESPHome 当前支持的传感器类型有限，因此未将它们强行映射为不匹配的 HomeKit 类型。
+
+## 6. 兼容性说明
+
+- HAP-ESPHome：<https://github.com/rednblkx/HAP-ESPHome>
+- ESPHome Bluetooth Proxy：<https://esphome.io/components/bluetooth_proxy/>
+- 原始项目：<https://github.com/louliangsheng/daikin-air-sensor>
+
+原项目使用旧式 ESPHome 自定义组件接口。本分支的 CI 会验证固定版本下的三个配置；若升级 ESPHome，需要同步评估旧式 `platform: custom` / `custom_component` 接口和 HAP-ESPHome 的兼容性。
