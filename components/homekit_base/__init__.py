@@ -49,6 +49,7 @@ cv.only_on([PLATFORM_ESP32]),
 cv.only_with_esp_idf)
 
 async def to_code(config):
+    cg.add_global(cg.RawStatement('#include "esphome/components/homekit_base/HAPRootComponent.h"'))
     from esphome.core import CORE
     if getattr(CORE, "using_toolchain_esp_idf", False):
         cg.add_platformio_option("lib_ignore", ["libsodium"])
