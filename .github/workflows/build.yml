@@ -30,7 +30,7 @@ jobs:
           python-version: "3.11"
 
       - name: Install ESPHome
-        run: pip install "esphome==2024.12.4"
+        run: pip install "esphome==2026.10.1"
 
       - name: Prepare secrets
         run: cp secrets.yaml.example secrets.yaml
