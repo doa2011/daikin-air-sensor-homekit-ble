@@ -6,19 +6,16 @@ esphome:
     # version: "PM2005"
   name_add_mac_suffix: true
   includes:
-    - "header/cm1106.h"
-    - "header/pm2105.h"  #根据PM2.5传感器型号选择
+    - "components/daikin_cm1106/cm1106.h"
+    - "components/daikin_pm25/pm25.h"
+    - "components/daikin_ze08/ze08.h"
     # - "header/pm2005.h"
 
 external_components:
-  # 先加载本地 PN532 轻量声明：本项目不使用 HomeKey，只需要满足 HAP-ESPHome 的可选类型引用
   - source:
       type: local
       path: components
-    components: [pn532]
-  - source: github://rednblkx/HAP-ESPHome@f5b8e3f172817fea81f7ddceff91c9b5cef94538
-    components: [homekit, homekit_base]
-    refresh: 1d
+    components: [homekit, homekit_base, daikin_cm1106, daikin_pm25, daikin_ze08]
 
 esp32:
   board: nodemcu-32s
@@ -49,12 +46,16 @@ logger:
     sensor: WARN
     component: ERROR
 
+esp32_ble:
+  max_connections: 3
+
 esp32_ble_tracker:
   scan_parameters:
     active: true
 
 bluetooth_proxy:
   active: true
+  connection_slots: 3
 
 uart:
 - id: cm1106_uart
