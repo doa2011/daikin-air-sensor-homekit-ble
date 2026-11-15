@@ -2,6 +2,8 @@
 #include <esphome/core/defines.h>
 #ifdef USE_SENSOR
 #include <map>
+#include <array>
+#include <cstring>
 #include "const.h"
 #include <esphome/core/application.h>
 #include <hap.h>
@@ -58,30 +60,31 @@ namespace esphome
       void setup() {
         hap_serv_t* service = nullptr;
 
-        std::string device_class = sensorPtr->get_device_class();
-        if (device_class == "temperature") {
+        std::array<char, 48> device_class_buffer{};
+        const char *device_class = sensorPtr->get_device_class_to(device_class_buffer);
+        if (!strcmp(device_class, "temperature")) {
           service = hap_serv_temperature_sensor_create(sensorPtr->state);
         }
-        else if (device_class == "humidity") {
+        else if (!strcmp(device_class, "humidity")) {
           service = hap_serv_humidity_sensor_create(sensorPtr->state);
         }
-        else if (device_class == "illuminance") {
+        else if (!strcmp(device_class, "illuminance")) {
           service = hap_serv_light_sensor_create(sensorPtr->state);
         }
-        else if (device_class == "aqi") {
+        else if (!strcmp(device_class, "aqi")) {
           service = hap_serv_air_quality_sensor_create(sensorPtr->state);
         }
-        else if (device_class == "co2" || device_class == "carbon_dioxide") {
+        else if (!strcmp(device_class, "co2") || !strcmp(device_class, "carbon_dioxide")) {
           service = hap_serv_carbon_dioxide_sensor_create(sensorPtr->state);
         }
-        else if (device_class == "co") {
+        else if (!strcmp(device_class, "co")) {
           service = hap_serv_carbon_monoxide_sensor_create(sensorPtr->state);
         }
-        else if (device_class == "pm10") {
+        else if (!strcmp(device_class, "pm10")) {
           service = hap_serv_create(HAP_SERV_UUID_AIR_QUALITY_SENSOR);
           hap_serv_add_char(service, hap_char_pm_10_density_create(sensorPtr->state));
         }
-        else if (device_class == "pm25") {
+        else if (!strcmp(device_class, "pm25")) {
           service = hap_serv_create(HAP_SERV_UUID_AIR_QUALITY_SENSOR);
           hap_serv_add_char(service, hap_char_pm_2_5_density_create(sensorPtr->state));
         }
