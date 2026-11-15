@@ -13,7 +13,6 @@ CONFIG_SCHEMA = cv.All(
                          device_class="carbon_dioxide", state_class="measurement")
     .extend(cv.polling_component_schema("10s"))
     .extend({
-        cv.GenerateID(): cv.declare_id(CM1106Sensor),
         cv.Required(CONF_UART_ID): cv.use_id(uart.UARTComponent),
     }),
 )
