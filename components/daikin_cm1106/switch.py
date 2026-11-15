@@ -12,6 +12,7 @@ CONFIG_SCHEMA = switch.switch_schema(CM1106CalibrateSwitch).extend({
 }).extend(cv.COMPONENT_SCHEMA)
 
 async def to_code(config):
+    cg.add_global(cg.RawStatement('#include "esphome/components/daikin_cm1106/cm1106.h"'))
     parent = await cg.get_variable(config[CONF_UART_ID])
     var = cg.new_Pvariable(config[CONF_ID], parent)
     await cg.register_component(var, config)
