@@ -14,7 +14,7 @@ external_components:
       type: local
       path: components
     components: [pn532]
-  - source: github://rednblkx/HAP-ESPHome@main
+  - source: github://rednblkx/HAP-ESPHome@f5b8e3f172817fea81f7ddceff91c9b5cef94538
     components: [homekit, homekit_base]
     refresh: 1d
 
