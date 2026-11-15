@@ -4,16 +4,11 @@ esphome:
     name: "DAIKIN.BRY88AA151K"
     version: "PM2005"
   name_add_mac_suffix: true
-  includes:
-    - "components/daikin_cm1106/cm1106.h"
-    - "components/daikin_pm25/pm25.h"
-    - "components/daikin_ze08/ze08.h"
 
 external_components:
-  - source:
-      type: local
-      path: components
+  - source: github://doa2011/daikin-air-sensor-homekit-ble@feature/homekit-ble-proxy
     components: [homekit, homekit_base, daikin_cm1106, daikin_pm25, daikin_ze08]
+    refresh: 1d
 
 esp32:
   board: nodemcu-32s
