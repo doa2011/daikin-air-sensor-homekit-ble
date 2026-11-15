@@ -18,6 +18,7 @@ CONFIG_SCHEMA = cv.All(
 )
 
 async def to_code(config):
+    cg.add_global(cg.RawStatement('#include "esphome/components/daikin_pm25/pm25.h"'))
     bus = await cg.get_variable(config[CONF_I2C_ID])
     var = cg.new_Pvariable(config[CONF_ID], bus, config[CONF_UPDATE_INTERVAL])
     await cg.register_component(var, config)
