@@ -4,6 +4,7 @@
 #include <map>
 #include <array>
 #include <cstring>
+#include <string>
 #include "const.h"
 #include <esphome/core/application.h>
 #include <hap.h>
