@@ -18,6 +18,7 @@ CONFIG_SCHEMA = cv.All(
 )
 
 async def to_code(config):
+    cg.add_global(cg.RawStatement('#include "esphome/components/daikin_cm1106/cm1106.h"'))
     parent = await cg.get_variable(config[CONF_UART_ID])
     var = cg.new_Pvariable(config[CONF_ID], parent, config[CONF_UPDATE_INTERVAL])
     await cg.register_component(var, config)
