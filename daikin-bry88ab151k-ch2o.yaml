@@ -11,12 +11,22 @@ esphome:
     - "pm2105.h"  #根据PM2.5传感器型号选择
     # - "pm2005.h"
 
+external_components:
+  - source: github://rednblkx/HAP-ESPHome@main
+    refresh: 1d
+
 esp32:
   board: nodemcu-32s
+  framework:
+    type: esp-idf
+    sdkconfig_options:
+      CONFIG_COMPILER_OPTIMIZATION_SIZE: y
+      CONFIG_LWIP_MAX_SOCKETS: "16"
+      CONFIG_MBEDTLS_HKDF_C: y
 
-wifi: 
-  # ssid: 'L' #填写自己的WiFi及密码
-  # password: '1234567890'
+wifi:
+  ssid: !secret wifi_ssid
+  password: !secret wifi_password
   ap:
     ssid: "DAIKIN Fallback Hotspot"
 
@@ -27,8 +37,6 @@ api:
 
 ota:
 
-web_server:
-  port: 80
 
 logger:
   logs:
@@ -37,10 +45,12 @@ logger:
     sensor: WARN
     component: ERROR
 
-# bluetooth_proxy:  #需要蓝牙代理功能可以打开
-#   active: true
+esp32_ble_tracker:
+  scan_parameters:
+    active: true
 
-# esp32_ble_tracker:
+bluetooth_proxy:
+  active: true
 
 uart:
 - id: cm1106_uart
@@ -347,3 +357,19 @@ button:
   on_press:
     then:
       - switch.turn_on: calibration
+
+# HomeKit 直接接入 Apple 家庭；HA API 与 BLE Proxy 同时保留
+homekit_base:
+  meta:
+    name: "Daikin Air Sensor"
+    manufacturer: "DAIKIN"
+    model: "BRY88"
+  setup_code: !secret homekit_setup_code
+  setup_id: "DK88"
+
+homekit:
+  sensor:
+    - id: temperature
+    - id: humidity
+    - id: co2sensor
+    - id: pm25sensor
