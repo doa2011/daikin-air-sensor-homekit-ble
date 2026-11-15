@@ -59,29 +59,29 @@ namespace esphome
         hap_serv_t* service = nullptr;
 
         std::string device_class = sensorPtr->get_device_class();
-        if (std::equal(device_class.begin(), device_class.end(), strdup("temperature"))) {
+        if (device_class == "temperature") {
           service = hap_serv_temperature_sensor_create(sensorPtr->state);
         }
-        else if (std::equal(device_class.begin(), device_class.end(), strdup("humidity"))) {
+        else if (device_class == "humidity") {
           service = hap_serv_humidity_sensor_create(sensorPtr->state);
         }
-        else if (std::equal(device_class.begin(), device_class.end(), strdup("illuminance"))) {
+        else if (device_class == "illuminance") {
           service = hap_serv_light_sensor_create(sensorPtr->state);
         }
-        else if (std::equal(device_class.begin(), device_class.end(), strdup("aqi"))) {
+        else if (device_class == "aqi") {
           service = hap_serv_air_quality_sensor_create(sensorPtr->state);
         }
-        else if (std::equal(device_class.begin(), device_class.end(), strdup("co2"))) {
+        else if (device_class == "co2" || device_class == "carbon_dioxide") {
           service = hap_serv_carbon_dioxide_sensor_create(sensorPtr->state);
         }
-        else if (std::equal(device_class.begin(), device_class.end(), strdup("co"))) {
+        else if (device_class == "co") {
           service = hap_serv_carbon_monoxide_sensor_create(sensorPtr->state);
         }
-        else if (std::equal(device_class.begin(), device_class.end(), strdup("pm10"))) {
+        else if (device_class == "pm10") {
           service = hap_serv_create(HAP_SERV_UUID_AIR_QUALITY_SENSOR);
           hap_serv_add_char(service, hap_char_pm_10_density_create(sensorPtr->state));
         }
-        else if (std::equal(device_class.begin(), device_class.end(), strdup("pm25"))) {
+        else if (device_class == "pm25") {
           service = hap_serv_create(HAP_SERV_UUID_AIR_QUALITY_SENSOR);
           hap_serv_add_char(service, hap_char_pm_2_5_density_create(sensorPtr->state));
         }
