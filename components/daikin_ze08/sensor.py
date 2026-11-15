@@ -6,7 +6,7 @@ from esphome.const import CONF_ID, CONF_UART_ID
 DEPENDENCIES = ["uart"]
 AUTO_LOAD = ["sensor"]
 ze_ns = cg.esphome_ns.namespace("daikin_ze08")
-ZE08Sensor = ze_ns.class_("ZE08Sensor", cg.PollingComponent, uart.UARTDevice, sensor.Sensor)
+ZE08Sensor = ze_ns.class_("ZE08Sensor", cg.PollingComponent, sensor.Sensor)
 
 CONFIG_SCHEMA = cv.All(
     sensor.sensor_schema(ZE08Sensor, unit_of_measurement="µg/m³", accuracy_decimals=0,
