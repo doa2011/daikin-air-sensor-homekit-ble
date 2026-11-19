@@ -32,6 +32,29 @@ captive_portal:
 api:
   reboot_timeout: 0s
 
+# LAN-only device management. No web OTA is enabled.
+web_server:
+  port: 80
+  version: 2
+  local: true
+  log: false
+  auth:
+    username: !secret web_username
+    password: !secret web_password
+    type: digest
+
+# Runtime heap diagnostics: compare idle, browser-open and BLE-loaded states.
+debug:
+  update_interval: 10s
+
+text_sensor:
+  - platform: debug
+    device:
+      name: "DAIKIN Device Info"
+    reset_reason:
+      name: "DAIKIN Reset Reason"
+
+
 ota:
   - platform: esphome
 logger:
