@@ -73,6 +73,10 @@ ESPHome 会通过 HA 蓝牙集成汇总多个 Proxy。GATT 连接槽只限制同
 - 页面显示所有非 internal 的实体，包括传感器、阈值 number、LED 指示开关、重启和校准按钮。
 - 诊断实体每 10 秒更新：Heap Free、Heap Min Free、最大连续 Heap Block、Heap Fragmentation、Loop Time、设备信息和复位原因。
 
+## 网络资源配置
+
+为同时运行 HomeKit、ESPHome Native API、Web Server 和 BLE Proxy，LWIP Socket 上限设为 20。实际需求由 ESPHome 配置检查给出；若未来新增网络服务，应重新检查 TCP/UDP/监听 Socket 需求，并结合运行时 Heap 指标验证余量。
+
 ## 内存验证
 
 GitHub Actions 对三个型号执行 `esphome compile` 和 `esphome analyze-memory`。每个型号分别上传固件构建目录和内存分析报告。CI 的静态分析不等于设备运行时实测；刷机后应分别记录待机、Web 页面打开、BLE 三个 GATT 连接活跃时的 Heap Free / Min Free / Max Block。
