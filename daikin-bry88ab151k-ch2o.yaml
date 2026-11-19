@@ -18,7 +18,7 @@ esp32:
     type: esp-idf
     sdkconfig_options:
       CONFIG_COMPILER_OPTIMIZATION_SIZE: y
-      CONFIG_LWIP_MAX_SOCKETS: "16"
+      CONFIG_LWIP_MAX_SOCKETS: "20"
       CONFIG_MBEDTLS_HKDF_C: y
 
 wifi:
