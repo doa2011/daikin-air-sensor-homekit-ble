@@ -54,7 +54,6 @@ text_sensor:
     reset_reason:
       name: "DAIKIN Reset Reason"
 
-
 ota:
   - platform: esphome
 logger:
@@ -96,6 +95,17 @@ i2c:
   scan: true
 
 sensor:
+  - platform: debug
+    free:
+      name: "DAIKIN Heap Free"
+    min_free:
+      name: "DAIKIN Heap Min Free"
+    block:
+      name: "DAIKIN Heap Max Block"
+    fragmentation:
+      name: "DAIKIN Heap Fragmentation"
+    loop_time:
+      name: "DAIKIN Loop Time"
 - platform: daikin_ze08
   uart_id: uart_ze08
   update_interval: 5s
