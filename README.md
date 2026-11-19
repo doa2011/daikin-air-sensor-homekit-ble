@@ -16,7 +16,10 @@
 - Bluetooth Proxy：支持 BLE 广播转发和主动 GATT 连接；配置 3 个连接槽，ESP32 每槽约占 1 KB RAM。
 - Apple HomeKit：通过 HAP-ESPHome 原生接入 Apple「家庭」，映射温度、湿度、CO₂、PM2.5。
 - TVOC 和甲醛继续由 HA 提供，不会伪装成不匹配的 HomeKit 传感器类型。
-- 移除 Web Server，为 BLE 与 HomeKit 留出内存。
+- 增加局域网 Web 管理页面（ESPHome Web Server v2、Digest 认证、内置前端资源）；不启用 Web OTA。
+- Web 页面可查看传感器、调节 number 参数、操作公开 switch/button，并查看设备诊断信息。
+- 增加运行时 Heap Free、Heap Min Free、最大连续块、Heap 碎片率、主循环耗时和复位原因监测。
+- CI 对三个型号执行固件编译及 `esphome analyze-memory`，分别上传构建产物和内存分析报告。
 
 ## 在 Home Assistant ESPHome 中导入
 
@@ -57,9 +60,23 @@ ESPHome 会通过 HA 蓝牙集成汇总多个 Proxy。GATT 连接槽只限制同
 
 设备连接 Wi-Fi 后，在 ESPHome 日志中查找 HomeKit 启动信息。打开 Apple「家庭」App 添加配件，输入 `secrets.yaml` 中的配对码。HomeKit 与 HA Native API 是两条独立接入路径，可以同时使用。
 
+## 局域网 Web 管理
+
+设备加入 Wi-Fi 后，在浏览器访问 `http://设备IP/`。页面使用 ESPHome Web Server v2，内置前端资源，无需浏览器访问外部 CDN。
+
+- 使用 Digest 用户名/密码认证，凭据配置在 `secrets.yaml` 的 `web_username` 和 `web_password`。
+- 仅建议在可信局域网访问；不要在路由器上做公网端口映射。
+- 不启用 Web OTA，固件更新继续通过受保护的 ESPHome OTA / Native API 工作流。
+- 页面显示所有非 internal 的实体，包括传感器、阈值 number、LED 指示开关、重启和校准按钮。
+- 诊断实体每 10 秒更新：Heap Free、Heap Min Free、最大连续 Heap Block、Heap Fragmentation、Loop Time、设备信息和复位原因。
+
+## 内存验证
+
+GitHub Actions 对三个型号执行 `esphome compile` 和 `esphome analyze-memory`。每个型号分别上传固件构建目录和内存分析报告。CI 的静态分析不等于设备运行时实测；刷机后应分别记录待机、Web 页面打开、BLE 三个 GATT 连接活跃时的 Heap Free / Min Free / Max Block。
+
 ## 编译验证
 
-GitHub Actions 对三个 YAML 分别执行 ESPHome 配置检查和固件编译。只有三个型号全部通过后，才将该分支标记为可部署版本。
+GitHub Actions 对三个 YAML 分别执行 ESPHome 配置检查、固件编译和内存分析。三个型号全部通过后，才将该分支标记为可部署版本。
 
 ## 上游项目
 
