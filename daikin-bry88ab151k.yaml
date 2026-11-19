@@ -91,17 +91,17 @@ i2c:
   scan: true
 
 sensor:
-  - platform: debug
-    free:
-      name: "DAIKIN Heap Free"
-    min_free:
-      name: "DAIKIN Heap Min Free"
-    block:
-      name: "DAIKIN Heap Max Block"
-    fragmentation:
-      name: "DAIKIN Heap Fragmentation"
-    loop_time:
-      name: "DAIKIN Loop Time"
+- platform: debug
+  free:
+    name: "DAIKIN Heap Free"
+  min_free:
+    name: "DAIKIN Heap Min Free"
+  block:
+    name: "DAIKIN Heap Max Block"
+  fragmentation:
+    name: "DAIKIN Heap Fragmentation"
+  loop_time:
+    name: "DAIKIN Loop Time"
 - platform: daikin_cm1106
   uart_id: cm1106_uart
   update_interval: 10s
