@@ -32,7 +32,9 @@ class PM25Sensor : public PollingComponent, public sensor::Sensor, public i2c::I
       offset = 1;
     } else {
       ESP_LOGW(TAG, "Invalid PM sensor frame header: %02X %02X", data[0], data[1]);
-      ESP_LOGD(TAG, "Raw frame: %02X %02X %02X %02X %02X %02X %02X %02X %02X %02X %02X %02X",\n               data[0], data[1], data[2], data[3], data[4], data[5],\n               data[6], data[7], data[8], data[9], data[10], data[11]);
+      ESP_LOGD(TAG, "Raw frame: %02X %02X %02X %02X %02X %02X %02X %02X %02X %02X %02X %02X",
+               data[0], data[1], data[2], data[3], data[4], data[5],
+               data[6], data[7], data[8], data[9], data[10], data[11]);
       return;
     }
 
