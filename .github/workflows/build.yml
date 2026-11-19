@@ -38,6 +38,19 @@ jobs:
       - name: Compile firmware
         run: esphome compile "${{ matrix.config }}"
 
+      - name: Analyze firmware memory
+        run: |
+          esphome analyze-memory "${{ matrix.config }}" 2>&1 | tee "memory-${{ matrix.config }}.txt"
+
+      - name: Upload memory report
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: "${{ matrix.config }}-memory-report"
+          path: memory-${{ matrix.config }}.txt
+          if-no-files-found: warn
+          retention-days: 30
+
       - name: Upload build output
         if: always()
         uses: actions/upload-artifact@v4
