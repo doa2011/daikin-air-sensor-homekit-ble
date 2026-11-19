@@ -37,6 +37,8 @@
 wifi_ssid: "你的 Wi-Fi 名称"
 wifi_password: "你的 Wi-Fi 密码"
 homekit_setup_code: "321-54-987"
+web_username: "daikin"
+web_password: "请替换为长随机密码"
 ```
 
 HomeKit 配对码必须符合 `XXX-XX-XXX` 格式。请更换示例码；不要将真实 `secrets.yaml` 上传到 GitHub。
@@ -66,7 +68,8 @@ ESPHome 会通过 HA 蓝牙集成汇总多个 Proxy。GATT 连接槽只限制同
 
 - 使用 Digest 用户名/密码认证，凭据配置在 `secrets.yaml` 的 `web_username` 和 `web_password`。
 - 仅建议在可信局域网访问；不要在路由器上做公网端口映射。
-- 不启用 Web OTA，固件更新继续通过受保护的 ESPHome OTA / Native API 工作流。
+- 普通 Web 管理页显式关闭 Web OTA；固件更新继续通过 ESPHome OTA / Native API 工作流。现有 `captive_portal` 的救援 AP 行为仍按 ESPHome 机制单独工作。
+- 不要在路由器上为设备开放公网端口；Digest 认证也不能替代可信局域网和网络隔离。
 - 页面显示所有非 internal 的实体，包括传感器、阈值 number、LED 指示开关、重启和校准按钮。
 - 诊断实体每 10 秒更新：Heap Free、Heap Min Free、最大连续 Heap Block、Heap Fragmentation、Loop Time、设备信息和复位原因。
 
