@@ -38,6 +38,7 @@ web_server:
   version: 2
   local: true
   log: false
+  ota: false
   auth:
     username: !secret web_username
     password: !secret web_password
